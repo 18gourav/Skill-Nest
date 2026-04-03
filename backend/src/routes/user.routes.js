@@ -68,7 +68,7 @@ router.get("/google", (req, res, next) => {
   const state = encodeOAuthState(redirectBase);
 
   return passport.authenticate("google", {
-    scope: ["profile", "email"],
+    scope: ["openid", "profile", "email"],
     state,
     session: false,
   })(req, res, next);
