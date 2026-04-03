@@ -10,7 +10,7 @@ const highlights = [
   },
   {
     title: "Login",
-    description: "Students can log in with email or Google and enroll in the course they want.",
+    description: "Students can log in with email and enroll in the course they want.",
   },
   {
     title: "Dashboard",

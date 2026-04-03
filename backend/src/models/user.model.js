@@ -27,16 +27,6 @@ const userSchema = new Schema({
         required: false,
         minlength: 6,
     },
-    googleId: {
-        type: String,
-        unique: true,
-        sparse: true,
-    },
-    authProvider: {
-        type: String,
-        enum: ["local", "google"],
-        default: "local",
-    },
     refreshToken: {
         type: String,
     },

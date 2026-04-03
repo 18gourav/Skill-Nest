@@ -1,22 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import toast from "react-hot-toast";
 import { getDashboard } from "../api/authApi";
 import Reveal from "../components/Reveal";
 
 export default function DashboardPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [dashboard, setDashboard] = useState(null);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    const oauthStatus = searchParams.get("oauth");
-
-    if (oauthStatus === "success") {
-      toast.success("Logged in with Google");
-      setSearchParams({}, { replace: true });
-    }
-  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     const fetchDashboard = async () => {

@@ -3,8 +3,6 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import passport from "passport";
-import "./config/passport.js";
 import userRouter from "./routes/user.routes.js";
 import courseRouter from "./routes/course.routes.js";
 
@@ -37,7 +35,6 @@ app.use(express.json({limit: "16kb"}));
 app.use(express.urlencoded({extended: true, limit: "16kb"}));
 app.use(express.static("public")); //used to serve static files like images, css, js, etc.
 app.use(cookieParser());
-app.use(passport.initialize());
 app.use("/api", apiLimiter);
 
 // Routes
