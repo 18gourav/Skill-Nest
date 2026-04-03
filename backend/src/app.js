@@ -20,9 +20,23 @@ app.use(helmet({
     crossOriginResourcePolicy: false,
 }));
 
+const getNormalizedOrigin = (value) => {
+    if (!value) return null;
+
+    try {
+        return new URL(value).origin;
+    } catch {
+        return null;
+    }
+};
+
+const configuredClientOrigin = getNormalizedOrigin(process.env.CLIENT_URL);
+
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) || origin === process.env.CLIENT_URL) {
+        const requestOrigin = getNormalizedOrigin(origin);
+
+        if (!origin || /^http:\/\/localhost:\d+$/.test(origin) || /^http:\/\/127\.0\.0\.1:\d+$/.test(origin) || (requestOrigin && configuredClientOrigin && requestOrigin === configuredClientOrigin)) {
             return callback(null, true);
         }
 
