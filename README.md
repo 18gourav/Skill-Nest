@@ -175,6 +175,7 @@ Vite usually starts on `http://localhost:5174` or the next free port.
 ```json
 {
   "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js",
+  "start": "node -r dotenv/config --experimental-json-modules src/index.js",
   "promote-admin": "node src/scripts/promoteAdmin.js"
 }
 ```
