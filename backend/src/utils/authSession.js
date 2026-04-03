@@ -1,22 +1,63 @@
 import { User } from "../models/user.model.js";
 import { apiError } from "./apiError.js";
 
-export const getCookieOptions = () => ({
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-});
+const parseHostname = (value) => {
+  if (!value) return null;
 
-export const setAuthCookies = (res, accessToken, refreshToken) => {
-  const options = getCookieOptions();
+  try {
+    if (value.startsWith("http://") || value.startsWith("https://")) {
+      return new URL(value).hostname;
+    }
+
+    return new URL(`http://${value}`).hostname;
+  } catch {
+    return null;
+  }
+};
+
+const shouldUseCrossSiteCookies = (req) => {
+  if (!req) {
+    return process.env.NODE_ENV === "production";
+  }
+
+  const origin = req.get("origin");
+  const originHostname = parseHostname(origin);
+
+  if (!originHostname) {
+    return process.env.NODE_ENV === "production";
+  }
+
+  const forwardedHost = req.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const requestHost = forwardedHost || req.get("host");
+  const requestHostname = parseHostname(requestHost);
+
+  if (!requestHostname) {
+    return process.env.NODE_ENV === "production";
+  }
+
+  return originHostname !== requestHostname;
+};
+
+export const getCookieOptions = (req) => {
+  const useCrossSiteCookies = shouldUseCrossSiteCookies(req);
+
+  return {
+    httpOnly: true,
+    secure: useCrossSiteCookies,
+    sameSite: useCrossSiteCookies ? "none" : "lax",
+  };
+};
+
+export const setAuthCookies = (req, res, accessToken, refreshToken) => {
+  const options = getCookieOptions(req);
 
   return res
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options);
 };
 
-export const clearAuthCookies = (res) => {
-  const options = getCookieOptions();
+export const clearAuthCookies = (req, res) => {
+  const options = getCookieOptions(req);
 
   return res
     .clearCookie("accessToken", options)

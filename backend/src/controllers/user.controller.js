@@ -63,7 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
    const loggedInUser = await User.findById(findUser._id).select("-password -refreshToken");
 
-   return setAuthCookies(res, accessToken, refreshToken)
+   return setAuthCookies(req, res, accessToken, refreshToken)
       .status(200)
       .json(
          new apiResponse(
@@ -89,7 +89,7 @@ const logoutUser = asyncHandler(async (req, res) => {
       }
    );
 
-   return clearAuthCookies(res)
+   return clearAuthCookies(req, res)
       .status(200)
       .json(new apiResponse(200, null, "User logged out successfully"));
 });
@@ -114,7 +114,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
    const { accessToken, refreshToken } = await generateAuthTokens(user._id);
 
-   return setAuthCookies(res, accessToken, refreshToken)
+   return setAuthCookies(req, res, accessToken, refreshToken)
       .status(200)
       .json(
          new apiResponse(

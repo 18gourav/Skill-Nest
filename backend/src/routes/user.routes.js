@@ -87,7 +87,7 @@ router.get("/google/callback", (req, res, next) => {
     }
 
     const { accessToken, refreshToken } = await generateAuthTokens(user._id);
-    return setAuthCookies(res, accessToken, refreshToken).redirect(`${redirectBase}/dashboard?oauth=success`);
+    return setAuthCookies(req, res, accessToken, refreshToken).redirect(`${redirectBase}/dashboard?oauth=success`);
   })(req, res, next);
 });
 
