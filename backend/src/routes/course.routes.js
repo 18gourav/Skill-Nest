@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getAdminCoursesOverview,
   createCourse,
   deleteCourse,
   enrollCourse,
@@ -18,6 +19,7 @@ router.route("/").get(getAllCourses);
 // Enroll and dashboard support
 router.route("/enroll/:courseId").post(verifyJWT, enrollCourse);
 router.route("/my/enrolled").get(verifyJWT, getEnrolledCourses);
+router.route("/admin/overview").get(verifyJWT, verifyAdmin, getAdminCoursesOverview);
 
 // Admin CRUD routes
 router.route("/").post(verifyJWT, verifyAdmin, createCourse);

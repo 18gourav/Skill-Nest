@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createCourse, deleteCourse, listCourses, updateCourse } from "../api/courseApi";
+import { createCourse, deleteCourse, listAdminCoursesOverview, updateCourse } from "../api/courseApi";
 
 const emptyForm = { title: "", description: "", mentor: "", price: "" };
 
@@ -11,7 +11,7 @@ export default function AdminCoursesPage() {
 
   const fetchCourses = async () => {
     try {
-      const response = await listCourses();
+      const response = await listAdminCoursesOverview();
       setCourses(response?.data || []);
     } catch (err) {
       setError(err?.response?.data?.message || "Failed to fetch courses");
@@ -23,7 +23,7 @@ export default function AdminCoursesPage() {
 
     const run = async () => {
       try {
-        const response = await listCourses();
+        const response = await listAdminCoursesOverview();
         if (mounted) {
           setCourses(response?.data || []);
         }
@@ -135,6 +135,18 @@ export default function AdminCoursesPage() {
                 </p>
                 <p className="max-w-3xl text-slate-600">{course.description}</p>
                 <p className="font-semibold text-cyan-700">INR {course.price}</p>
+                <p className="text-sm font-semibold text-slate-800">
+                  Enrolled students: {course.enrolledStudents?.length || 0}
+                </p>
+                {(course.enrolledStudents?.length || 0) > 0 && (
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
+                    {course.enrolledStudents.map((student) => (
+                      <li key={student._id}>
+                        {student.fullName || student.username} ({student.emailId})
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <div className="flex gap-2 md:shrink-0">

@@ -39,6 +39,14 @@ const getCourseById = asyncHandler(async (req, res) => {
   return res.status(200).json(new apiResponse(200, course, "Course fetched successfully"));
 });
 
+const getAdminCoursesOverview = asyncHandler(async (_req, res) => {
+  const courses = await Course.find()
+    .populate("enrolledStudents", "fullName emailId username")
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json(new apiResponse(200, courses, "Admin courses fetched successfully"));
+});
+
 const updateCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
   const { title, description, price, mentor } = req.body;
@@ -86,6 +94,10 @@ const enrollCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
   const userId = req.user?._id;
 
+  if (req.user?.role === "admin") {
+    throw new apiError(403, "Admin accounts cannot enroll in courses");
+  }
+
   const course = await Course.findById(courseId);
 
   if (!course) {
@@ -129,6 +141,7 @@ export {
   createCourse,
   getAllCourses,
   getCourseById,
+  getAdminCoursesOverview,
   updateCourse,
   deleteCourse,
   enrollCourse,

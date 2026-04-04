@@ -5,6 +5,11 @@ export const listCourses = async () => {
   return response.data;
 };
 
+export const listAdminCoursesOverview = async () => {
+  const response = await apiClient.get("/courses/admin/overview");
+  return response.data;
+};
+
 export const getCourseById = async (courseId) => {
   const response = await apiClient.get(`/courses/${courseId}`);
   return response.data;

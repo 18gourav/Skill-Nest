@@ -5,7 +5,7 @@ import Reveal from "../components/Reveal";
 import { useAuth } from "../context/useAuth";
 
 export default function CoursesPage() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -28,6 +28,11 @@ export default function CoursesPage() {
   }, []);
 
   const onEnroll = async (courseId) => {
+    if (isAdmin) {
+      alert("Admin accounts cannot enroll in courses");
+      return;
+    }
+
     try {
       await enrollInCourse(courseId);
       alert("Enrolled successfully");
@@ -85,13 +90,15 @@ export default function CoursesPage() {
                   View details
                 </Link>
 
-                {user ? (
+                {user && !isAdmin ? (
                   <button
                     onClick={() => onEnroll(course._id)}
                     className="rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
                   >
                     Enroll
                   </button>
+                ) : isAdmin ? (
+                  <p className="text-sm text-slate-500">Admin accounts cannot buy courses.</p>
                 ) : (
                   <p className="text-sm text-slate-500">Login to enroll in this course.</p>
                 )}

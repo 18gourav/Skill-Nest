@@ -7,7 +7,7 @@ import { useAuth } from "../context/useAuth";
 export default function CourseDetailPage() {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [course, setCourse] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -31,6 +31,11 @@ export default function CourseDetailPage() {
   }, [courseId]);
 
   const onEnroll = async () => {
+    if (isAdmin) {
+      setError("Admin accounts cannot buy courses");
+      return;
+    }
+
     setEnrolling(true);
     try {
       await enrollInCourse(courseId);
@@ -103,7 +108,7 @@ export default function CourseDetailPage() {
             </p>
 
             <div className="mt-6 space-y-3">
-              {user ? (
+              {user && !isAdmin ? (
                 <button
                   onClick={onEnroll}
                   disabled={enrolling}
@@ -111,6 +116,8 @@ export default function CourseDetailPage() {
                 >
                   {enrolling ? "Enrolling..." : "Enroll now"}
                 </button>
+              ) : isAdmin ? (
+                <p className="text-center text-sm text-slate-500">Admin accounts cannot buy courses.</p>
               ) : (
                 <Link
                   to="/login"
