@@ -7,7 +7,7 @@ const navClass = ({ isActive }) =>
   }`;
 
 export default function Shell({ children }) {
-  const { user, isAdmin, logout } = useAuth();
+  const { user, isAdmin, logout, loading } = useAuth();
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#eff6ff_0%,_#f8fafc_42%,_#ffffff_100%)] text-slate-900">
@@ -28,7 +28,7 @@ export default function Shell({ children }) {
               About
             </Link>
 
-            {user ? (
+            {loading ? null : user ? (
               <>
                 <NavLink to="/dashboard" className={navClass}>
                   Dashboard
